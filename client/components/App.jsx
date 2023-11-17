@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Note from "./Note.jsx";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -12,13 +13,13 @@ const App = () => {
   }, []);
 
   return (
-    <main>
+    <Note>
       {tasks.map((task) => (
         <span className="task" key={task.id}>
-          {task.description}
+          {tasks.task}
         </span>
       ))}
-    </main>
+    </Note>
   );
 };
 

@@ -12,6 +12,7 @@ app.use(express.json());
 
 app.get("/api/tasks", (req, res) => {
   sql`SELECT * FROM tasks`.then((rows) => {
+    console.log("hello");
     res.send(rows);
   });
 });

@@ -11,7 +11,7 @@ const sql = postgres(process.env.DATABASE_URL);
 const app = express();
 
 const client = new pg.Client({
-  connectionString: DATABASE_URL,
+  database: "ReactMVPDB",
 });
 
 await client.connect();
@@ -47,17 +47,41 @@ app.get("/api/tasks/:id", (req, res) => {
 });
 
 app.post("/api/tasks", (req, res) => {
-  const { note } = req.body;
-  if (note.length == 0) {
+  const { task, due, completed } = req.body;
+  const newTask = { task, due, completed };
+  if (newTask.length === 0) {
     console.log("Please fill out the chore to do");
     res.sendStatus(400);
   }
-  const newTask = { note };
   console.log(newTask);
-  sql`INSERT INTO tasks (name, due, completed) VALUES (${newTask.name}, ${newTask.due}, ${newTask.completed}) RETURNING *`
+  client
+    .query(
+      `INSERT INTO tasks(task, due, completed) VALUES ($1, $2, $3) RETURNING *`,
+      [task, due, completed]
+    )
     .then((data) => {
       console.log(data.rows[0]);
       res.send(data.rows[0]);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+});
+
+app.delete("/api/tasks/:id", (req, res) => {
+  const noteId = req.params.id;
+  client
+    .query(`DELETE FROM tasks WHERE id = $1 RETURNING *`, [noteId])
+    .then((data) => {
+      if (data.rows[0] !== undefined) {
+        console.log("We deleted: ", data.rows[0]);
+        res.status(200);
+        res.json(data.rows[0]);
+      } else {
+        console.log("We can't delete because no tasking has the ID");
+        res.sendStatus(404);
+      }
     })
     .catch((err) => {
       console.error(err);

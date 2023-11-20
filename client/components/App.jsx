@@ -9,7 +9,7 @@ const App = () => {
       .then((res) => res.json())
       .then((tasks) => {
         setTasks(tasks);
-        console.log("Fetched Tasks: ", tasks[0]);
+        console.log("Fetched Tasks: ", tasks);
       });
   }, []);
 
@@ -24,23 +24,28 @@ const App = () => {
       .then((res) => res.json())
       .then((newTask) => {
         setTasks([...tasks, newTask]);
-        console.log("Submitted Task: ", newTask);
+        console.log("Submitted Task: ", taskData);
       })
       .catch((err) => {
         console.error(err);
       });
   };
 
-  const handleNoteSubmit = (noteData, dueDate) => {
-    const taskData = { task: noteData, dueDate, completed: false };
-    // ********** Right now it is submitting everything as note data
+  const handleNoteSubmit = (noteData) => {
+    const taskObject = noteData;
+    const taskData = {
+      task: taskObject.task,
+      due: taskObject.dueDate,
+      completed: noteData.completed,
+    };
     submitTask(taskData);
   };
+
   return (
     <Note className="submit" onSubmit={handleNoteSubmit}>
       {tasks.map((task) => (
-        <span className="task" key={task.id}>
-          {tasks.content}
+        <span className="tasks" key={task.id}>
+          {task.content}
         </span>
       ))}
     </Note>

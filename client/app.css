@@ -1,9 +1,11 @@
 body {
   margin: 0;
+  background-image: url("https://cdn.pixabay.com/photo/2012/12/24/08/39/background-72250_1280.jpg");
 }
 
 .main {
   padding: 8px;
+  flex-grow: 1;
 }
 
 .task {
@@ -14,16 +16,9 @@ body {
   max-width: 200px;
 }
 
-.task + .task {
-  margin-top: 4px;
-}
-
-.task > * + * {
-  margin-left: 4px;
-}
-
 #note {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: auto;
 }

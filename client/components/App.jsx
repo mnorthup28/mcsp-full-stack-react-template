@@ -3,6 +3,7 @@ import Note from "./Note.jsx";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
+  const [deletedTasks, setDeletedTasks] = useState([]);
 
   useEffect(() => {
     fetch("/api/tasks")
@@ -42,24 +43,51 @@ const App = () => {
   };
 
   const handleDoubleClick = (task) => {
-    // console.log("double clicked  ", task.completed);
-    // const index = tasks.findIndex((t) => t.id === task.id);
-    // const newTasks = [...tasks];
-    // newTasks[index].completed = true;
-    // setTasks(newTasks);
+    // make an object of the parts of of the task object.
+    // put it on a different post it, but red.
+    // instead of due date say "FINISHED"
+    // will need fetch requests to get from another table AND read from that table
+    fetch("/api/deletedTasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((newDeletedTask) => {
+        // Update state with the new deleted task
+        setDeletedTasks([...deletedTasks, newDeletedTask]);
+
+        // Fetch the details of the newly created deleted task
+        fetch(`/api/deletedTasks/${newDeletedTask.id}`)
+          .then((res) => res.json())
+          .then((fetchedDeletedTask) => {
+            // Update state with the fetched deleted task
+            setDeletedTasks([...deletedTasks, fetchedDeletedTask]);
+            console.log("Fetched Deleted Task: ", fetchedDeletedTask);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    // Delete the original task
     fetch(`/api/tasks/${task.id}`, {
       method: "DELETE",
     })
       .then((res) => {
-        console.log("deleting...", task);
+        console.log("Deleting...", task);
         if (!res.ok) {
-          throw new Error("something went wrong");
+          throw new Error("Something went wrong");
         }
       })
       .catch((err) => {
         console.error(err);
       });
-    location.reload();
+    // location.reload();
   };
 
   return (
@@ -81,6 +109,12 @@ const App = () => {
             </span>
           )}
           <br />
+        </div>
+      ))}
+      <br />
+      {deletedTasks.map((deletedTask) => (
+        <div className="deletedTasks" key={deletedTasks.id}>
+          <span>{deletedTask.deletedTask}</span>
         </div>
       ))}
     </>

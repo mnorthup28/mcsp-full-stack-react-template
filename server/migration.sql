@@ -1,5 +1,7 @@
 -- DATABASE name is ReactMVPDB
 DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS deletedTasks;
+
 
 CREATE TABLE tasks (
   id SERIAL,
@@ -8,5 +10,11 @@ CREATE TABLE tasks (
   completed boolean
 );
 
+CREATE TABLE deletedTasks (
+  id SERIAL,
+  deletedTask TEXT
+);
+
 INSERT INTO tasks(task, due, completed) VALUES('Groceries', 'Dec 1', false);
+insert INTO deletedTasks(deletedTask) VALUES('Run that thing');
 

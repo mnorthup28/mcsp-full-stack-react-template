@@ -15,7 +15,11 @@ const Note = ({ onSubmit }) => {
   const submitNoteData = (event) => {
     event.preventDefault();
     const taskData = { task: noteData, dueDate: dueDate, completed: false };
-    onSubmit(taskData);
+    if (taskData.task.length === 0 || taskData.dueDate.length === 0) {
+      alert("please fill out data");
+    } else {
+      onSubmit(taskData);
+    }
     setNoteData("");
     setDueDate("");
   };

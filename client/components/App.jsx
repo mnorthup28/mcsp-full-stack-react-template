@@ -41,14 +41,49 @@ const App = () => {
     submitTask(taskData);
   };
 
+  const handleDoubleClick = (task) => {
+    // console.log("double clicked  ", task.completed);
+    // const index = tasks.findIndex((t) => t.id === task.id);
+    // const newTasks = [...tasks];
+    // newTasks[index].completed = true;
+    // setTasks(newTasks);
+    fetch(`/api/tasks/${task.id}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        console.log("deleting...", task);
+        if (!res.ok) {
+          throw new Error("something went wrong");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    location.reload();
+  };
+
   return (
-    <Note className="submit" onSubmit={handleNoteSubmit}>
+    <>
+      <br />
+      <Note className="submit" onSubmit={handleNoteSubmit} />
       {tasks.map((task) => (
-        <span className="tasks" key={task.id}>
-          {task.content}
-        </span>
+        <div
+          className="tasks"
+          key={task.id}
+          onDoubleClick={() => handleDoubleClick(task)}
+        >
+          {task.completed ? null : (
+            <span>
+              {task.task}
+              <br />
+              <br />
+              Complete by: {task.due}
+            </span>
+          )}
+          <br />
+        </div>
       ))}
-    </Note>
+    </>
   );
 };
 

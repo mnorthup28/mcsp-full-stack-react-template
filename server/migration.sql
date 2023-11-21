@@ -16,5 +16,6 @@ CREATE TABLE deletedTasks (
 );
 
 INSERT INTO tasks(task, due, completed) VALUES('Groceries', 'Dec 1', false);
-insert INTO deletedTasks(deletedTask) VALUES('Run that thing');
 
+
+-- implementing soft delete

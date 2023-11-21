@@ -106,15 +106,13 @@ app.get("/api/deletedTasks/:id", (req, res) => {
         console.log("There is no task with that ID");
         res.sendStatus(404);
       } else {
-        console.log(
-          `The value of id ${noteId}: ${data[0].task} due by ${data[0].due}.`
-        );
-        res.send(data);
+        console.log(`The value of id ${noteId}: ${data[0].deletedTask}.`);
+        res.send(data[0]); // Use res.send(data[0]) for a single task
       }
     })
     .catch((error) => {
       console.error("Error fetching task:", error);
-      res.status(500);
+      res.status(500).send(error);
     });
 });
 

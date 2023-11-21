@@ -63,7 +63,7 @@ const App = () => {
           .then((res) => res.json())
           .then((fetchedDeletedTask) => {
             // Update state with the fetched deleted task
-            setDeletedTasks([...deletedTasks, fetchedDeletedTask]);
+            setDeletedTasks([...deletedTasks, fetchedDeletedTask.deletedTask]);
             console.log("Fetched Deleted Task: ", fetchedDeletedTask);
           })
           .catch((err) => {
@@ -113,7 +113,7 @@ const App = () => {
       ))}
       <br />
       {deletedTasks.map((deletedTask) => (
-        <div className="deletedTasks" key={deletedTasks.id}>
+        <div className="deletedTasks" key={deletedTask.id}>
           <span>{deletedTask.deletedTask}</span>
         </div>
       ))}

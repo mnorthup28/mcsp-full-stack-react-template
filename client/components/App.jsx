@@ -3,7 +3,6 @@ import Note from "./Note.jsx";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
-  const [deletedTasks, setDeletedTasks] = useState([]);
 
   useEffect(() => {
     fetch("/api/tasks")
@@ -42,38 +41,33 @@ const App = () => {
     submitTask(taskData);
   };
 
-  const handleDoubleClick = (task) => {
-    // make an object of the parts of of the task object.
-    // put it on a different post it, but red.
-    // instead of due date say "FINISHED"
-    // will need fetch requests to get from another table AND read from that table
-    fetch("/api/deletedTasks", {
-      method: "POST",
+  const handleClick = (task) => {
+    fetch(`/api/tasks/${task.id}`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        completed: true,
+      }),
     })
-      .then((res) => res.json())
-      .then((newDeletedTask) => {
-        // Update state with the new deleted task
-        setDeletedTasks([...deletedTasks, newDeletedTask]);
-
-        // Fetch the details of the newly created deleted task
-        fetch(`/api/deletedTasks/${newDeletedTask.id}`)
-          .then((res) => res.json())
-          .then((fetchedDeletedTask) => {
-            // Update state with the fetched deleted task
-            setDeletedTasks([...deletedTasks, fetchedDeletedTask.deletedTask]);
-            console.log("Fetched Deleted Task: ", fetchedDeletedTask);
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+      .then((res) => {
+        console.log("Updating...", task);
+        if (!res.ok) {
+          throw new Error("Something went wrong");
+        }
+        return res.json();
+      })
+      .then((updatedTask) => {
+        console.log("Updated task:", updatedTask);
       })
       .catch((err) => {
         console.error(err);
       });
+    location.reload();
+  };
 
+  const handleDoubleClick = (task) => {
     // Delete the original task
     fetch(`/api/tasks/${task.id}`, {
       method: "DELETE",
@@ -87,7 +81,7 @@ const App = () => {
       .catch((err) => {
         console.error(err);
       });
-    // location.reload();
+    location.reload();
   };
 
   return (
@@ -96,11 +90,19 @@ const App = () => {
       <Note className="submit" onSubmit={handleNoteSubmit} />
       {tasks.map((task) => (
         <div
-          className="tasks"
+          className={`tasks ${task.completed ? "completed-task" : ""}`}
           key={task.id}
           onDoubleClick={() => handleDoubleClick(task)}
+          onClick={() => handleClick(task)}
         >
-          {task.completed ? null : (
+          {task.completed ? (
+            <span className="completed-task-text">
+              {task.task}
+              <br />
+              <br />
+              Completed! Good work!
+            </span>
+          ) : (
             <span>
               {task.task}
               <br />
@@ -111,12 +113,6 @@ const App = () => {
           <br />
         </div>
       ))}
-      {/* <br />
-      {deletedTasks.map((deletedTask) => (
-        <div className="deletedTasks" key={deletedTask.id}>
-          <span>{deletedTask.deletedTask}</span>
-        </div>
-      ))} */}
     </>
   );
 };

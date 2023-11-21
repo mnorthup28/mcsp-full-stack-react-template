@@ -111,12 +111,12 @@ const App = () => {
           <br />
         </div>
       ))}
-      <br />
+      {/* <br />
       {deletedTasks.map((deletedTask) => (
         <div className="deletedTasks" key={deletedTask.id}>
           <span>{deletedTask.deletedTask}</span>
         </div>
-      ))}
+      ))} */}
     </>
   );
 };
